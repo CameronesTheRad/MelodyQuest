@@ -1,5 +1,5 @@
 // Melody Quest - Rhythm Challenge Game
-// VERSION: v6.5 - BPM stages now static text display (not selectable)
+// VERSION: v6.6 - Changed feedback: no text after cycles, only "Success!" at round completion
 
 class RhythmGame {
     constructor() {
@@ -774,7 +774,7 @@ class RhythmGame {
     }
     
     handlePerfectCycle() {
-        this.showFeedback('Perfect!', 'perfect');
+        // No feedback text during cycles - only show "Success" at pattern completion
         
         this.currentMilestone++;
         
@@ -783,6 +783,9 @@ class RhythmGame {
         
         if (this.currentMilestone >= 4) {
             // Final round of this pattern complete (gold → gone)
+            // Show "Success" feedback
+            this.showFeedback('Success!', 'perfect');
+            
             // Hide scanner and center fog immediately
             if (this.scannerGroup) {
                 this.scannerGroup.style.opacity = '0';
@@ -982,7 +985,7 @@ class RhythmGame {
         // Show "New Challenge?" text
         this.showVictoryPrompt();
         
-        this.showFeedback('🎉 COMPLETE! 🎉', 'perfect');
+        this.showFeedback('🎉 Success! 🎉', 'perfect');
         
         // Don't auto-reset - wait for user to click dice
     }
@@ -1487,13 +1490,8 @@ class RhythmGame {
             if (this.baboonSliceLayer) this.baboonSliceLayer.style.opacity = '0';
             if (this.fogCircleImage) this.fogCircleImage.style.opacity = '0';
             
-            // Show appropriate feedback based on which pattern completed
-            const patternNum = this.currentPattern;
-            if (patternNum < 3) {
-                this.showFeedback(`Pattern ${patternNum} Complete!`, 'perfect');
-            } else {
-                this.showFeedback('🎉 COMPLETE! 🎉', 'perfect');
-            }
+            // "Success!" feedback already shown in handlePerfectCycle
+            // No additional feedback needed here
             
             // Trigger pattern complete after short delay
             setTimeout(() => {
@@ -1575,3 +1573,4 @@ document.addEventListener('DOMContentLoaded', () => {
         window.settingsMenu = new SettingsMenu(window.game);
     }
 });
+
