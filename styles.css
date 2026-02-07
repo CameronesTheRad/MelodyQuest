@@ -1,0 +1,480 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #000;
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+/* Fixed width container - with game background */
+#gameBackground {
+    position: relative;
+    width: 1000px;
+    height: 462px;
+    background-color: #1a1a2e;
+    background-image: url('game-background.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+#gameContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000px;
+    height: 462px;
+    z-index: 2;
+}
+
+/* ===== TOP UI BAR ===== */
+#topBar {
+    position: absolute;
+    top: 54px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    z-index: 10;
+}
+
+#progressContainer {
+    width: 100%;
+    background: linear-gradient(135deg, #B8860B, #FFD700, #B8860B);
+    padding: 4px;
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+#progressBar {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background: rgba(45, 49, 66, 0.9);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#progressFill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #FFA500, #FFD700);
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+/* Add glow effect when progress locks in */
+#progressFill.locked {
+    animation: progressLock 0.5s ease-out;
+}
+
+@keyframes progressLock {
+    0% { 
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.5);
+        transform: scaleY(1.1);
+    }
+    100% { 
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        transform: scaleY(1);
+    }
+}
+
+.progressMarker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: #FFD700;
+    box-shadow: 0 0 8px #FFD700;
+}
+
+/* ===== DIFFICULTY SLIDER ===== */
+#difficultyContainer {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(45, 49, 66, 0.85);
+    padding: 6px 12px;
+    border-radius: 16px;
+    z-index: 10;
+}
+
+.difficultyLabel {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.difficultyLabel.expert {
+    color: #FFD700;
+}
+
+.difficultyLabel.novice {
+    color: #FFFFFF;
+}
+
+#difficultySlider {
+    width: 100px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    border-radius: 3px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+#difficultySlider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #FFD700;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
+}
+
+#difficultySlider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #FFD700;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(255, 215, 0, 0.5);
+}
+
+/* ===== BUTTONS ===== */
+#quitButton {
+    display: none; /* Hidden - not needed for web version */
+}
+
+.quitIcon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.quitText {
+    line-height: 1.2;
+}
+
+#menuButton {
+    position: absolute;
+    top: 10px;
+    right: 250px;
+    width: 42px;
+    height: 42px;
+    background: rgba(139, 115, 85, 0.8);
+    border: 3px solid rgba(101, 84, 66, 1);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s;
+    z-index: 10;
+}
+
+#menuButton:hover {
+    transform: scale(1.1);
+}
+
+#menuButton:active {
+    transform: scale(0.9);
+}
+
+/* ===== RHYTHM CIRCLE (Positioned to match Unity - RIGHT SIDE) ===== */
+#circleContainer {
+    position: absolute;
+    right: 120px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 260px;
+    height: 260px;
+    z-index: 5;
+    overflow: visible;
+}
+
+#rhythmCircle {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+    overflow: visible;
+}
+
+/* ===== SLICES - COLOR SCHEME: silver → white → blue → gold → gone ===== */
+
+/* Base slice transition */
+.slice {
+    transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Baboon off-beat slice (RED) - uses red-slice.png image */
+.slice-baboon {
+    filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.8));
+    transition: opacity 0.3s ease;
+}
+
+/* Stage 0: Hidden slice (invisible until scanner passes) */
+.slice-hidden {
+    opacity: 0;
+}
+
+/* Stage 1: Silver slice (uses silver_slice.png) */
+.slice-silver {
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(200, 200, 200, 0.5));
+}
+
+/* Stage 2: White slice */
+.slice-white {
+    filter: brightness(1.2) saturate(0) drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    opacity: 0.85;
+}
+
+/* Stage 3: Blue slice (uses blue_slice.png) */
+.slice-blue {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(100, 180, 255, 0.8)) drop-shadow(0 0 15px rgba(80, 150, 255, 0.5));
+}
+
+/* Stage 4: Gold glow slice */
+.slice-gold {
+    opacity: 1;
+    filter: brightness(1.4) sepia(0.9) saturate(3) hue-rotate(15deg) drop-shadow(0 0 10px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+}
+
+/* Stage 5: Gone (slice disappears) */
+.slice-gone {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+/* ===== SCALING GLOW (behind medallion) ===== */
+#scalingGlow {
+    transition: transform 1s ease-out, opacity 1s ease, filter 0.5s ease;
+}
+
+#scalingGlow.glow-white {
+    filter: brightness(1.2) saturate(0) drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+}
+
+#scalingGlow.glow-blue {
+    filter: brightness(0.9) saturate(1.5) hue-rotate(200deg) drop-shadow(0 0 15px rgba(50, 100, 255, 0.8));
+}
+
+#scalingGlow.glow-whiteglow {
+    filter: brightness(1.5) saturate(0) drop-shadow(0 0 20px rgba(255, 255, 255, 0.9));
+}
+
+#scalingGlow.glow-gold {
+    filter: brightness(1.5) sepia(0.9) saturate(3) hue-rotate(15deg) drop-shadow(0 0 20px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+}
+
+/* ===== CENTER FOG ===== */
+#fogCircleImage {
+    transition: filter 0.55s ease;
+}
+
+#fogCircleImage.center-white {
+    filter: brightness(1.2) saturate(0) drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}
+
+#fogCircleImage.center-blue {
+    filter: brightness(0.9) saturate(1.5) hue-rotate(200deg) drop-shadow(0 0 10px rgba(50, 100, 255, 0.8));
+}
+
+#fogCircleImage.center-whiteglow {
+    filter: brightness(1.5) saturate(0) drop-shadow(0 0 15px rgba(255, 255, 255, 0.9));
+}
+
+#fogCircleImage.center-gold {
+    filter: brightness(1.4) sepia(0.9) saturate(3) hue-rotate(15deg) drop-shadow(0 0 20px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.6));
+}
+
+/* Cracked/broken state for miss feedback */
+.slice.cracked {
+    filter: brightness(0.3) saturate(0);
+    opacity: 0.5;
+    animation: crackFade 0.5s ease-out forwards;
+}
+
+@keyframes crackFade {
+    0% { 
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+.slice.missed {
+    filter: brightness(0.4) sepia(1) saturate(3) hue-rotate(-30deg);
+    opacity: 0.6;
+}
+
+/* ===== DRUM PAD (Entire bottom-right quadrant is tappable) ===== */
+#drumPadOverlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 500px;
+    height: 250px;
+    cursor: pointer;
+    z-index: 3;
+    transition: none;
+    /* Optional: visualize tap area during development */
+    /* background: rgba(255, 0, 0, 0.1); */
+}
+
+#drumPadHitArea {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+}
+
+/* Drum hit animation */
+#drumPadOverlay.drumHit {
+    animation: drumHit 0.2s ease;
+}
+
+@keyframes drumHit {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.98; }
+}
+
+/* ===== FEEDBACK TEXT ===== */
+#feedbackText {
+    position: absolute;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    font-weight: bold;
+    text-shadow: 
+        0 0 20px currentColor,
+        0 4px 10px rgba(0, 0, 0, 0.8),
+        2px 2px 0 rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 15;
+    white-space: nowrap;
+}
+
+#feedbackText.show {
+    opacity: 1;
+    animation: feedbackPulse 0.5s ease;
+}
+
+@keyframes feedbackPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.2); }
+}
+
+#feedbackText.hit { color: #00FF00; }
+#feedbackText.miss { color: #FF0000; }
+#feedbackText.perfect { color: #FFD700; }
+
+/* ===== STREAK COUNTER ===== */
+#streakCounter {
+    display: none; /* Hidden - using progress bar instead */
+}
+
+/* ===== LOADING STATE ===== */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+
+/* ===== SHAKE ANIMATION FOR MISS ===== */
+@keyframes shake {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    10% { transform: translate(-8px, 0) rotate(-1deg); }
+    20% { transform: translate(8px, 0) rotate(1deg); }
+    30% { transform: translate(-8px, 0) rotate(-1deg); }
+    40% { transform: translate(8px, 0) rotate(1deg); }
+    50% { transform: translate(-8px, 0) rotate(-1deg); }
+    60% { transform: translate(8px, 0) rotate(1deg); }
+    70% { transform: translate(-4px, 0) rotate(-0.5deg); }
+    80% { transform: translate(4px, 0) rotate(0.5deg); }
+    90% { transform: translate(-2px, 0) rotate(-0.25deg); }
+}
+
+.shake {
+    animation: shake 0.6s ease-in-out;
+}
+
+/* REDUCED shake - half intensity, half duration */
+@keyframes shakeLight {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    20% { transform: translate(-4px, 0) rotate(-0.5deg); }
+    40% { transform: translate(4px, 0) rotate(0.5deg); }
+    60% { transform: translate(-4px, 0) rotate(-0.5deg); }
+    80% { transform: translate(4px, 0) rotate(0.5deg); }
+}
+
+.shake-light {
+    animation: shakeLight 0.3s ease-in-out;
+}
+
+/* Dice button pulse animation for victory state */
+@keyframes dicePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5), 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.7), 0 6px 20px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* Victory prompt text pulse */
+@keyframes textPulse {
+    0%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    50% {
+        opacity: 0.7;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+}

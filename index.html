@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Melody Quest - Rhythm Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="settings-menu.css">
+</head>
+<body>
+    <!-- Full Game Background (from Unity screenshot) with fixed aspect ratio -->
+    <div id="gameBackground">
+        
+        <!-- Settings Menu Overlay -->
+        <div id="settingsMenu" class="modal-overlay hidden">
+            <div class="settings-panel">
+                <div class="settings-header">
+                    <h2>⚙️ Settings</h2>
+                    <button id="closeSettings" class="close-btn">✕</button>
+                </div>
+                
+                <div class="settings-content">
+                    
+                    <!-- Difficulty Groups -->
+                    <section class="settings-section">
+                        <h3>Select Difficulty Group</h3>
+                        <div class="difficulty-groups">
+                            <button class="group-btn" data-group="starter">
+                                <span class="group-icon">🟢</span>
+                                <span class="group-name">Starter</span>
+                                <span class="group-desc">Quarter notes only</span>
+                                <span class="group-count">0/25 completed</span>
+                            </button>
+                            
+                            <button class="group-btn active" data-group="intermediate">
+                                <span class="group-icon">🟡</span>
+                                <span class="group-name">Intermediate</span>
+                                <span class="group-desc">All 4 beats + sparse 8ths</span>
+                                <span class="group-count">0/25 completed</span>
+                            </button>
+                            
+                            <button class="group-btn" data-group="advanced">
+                                <span class="group-icon">🟠</span>
+                                <span class="group-name">Advanced</span>
+                                <span class="group-desc">8ths with missing beats</span>
+                                <span class="group-count">0/25 completed</span>
+                            </button>
+                            
+                            <button class="group-btn" data-group="expert">
+                                <span class="group-icon">🔴</span>
+                                <span class="group-name">Expert</span>
+                                <span class="group-desc">Sparse & syncopated</span>
+                                <span class="group-count">0/25 completed</span>
+                            </button>
+                        </div>
+                    </section>
+                    
+                    <!-- BPM Info - Shows the 3 BPM stages used in challenges (not selectable) -->
+                    <section class="settings-section">
+                        <h3>Challenge BPM Stages</h3>
+                        <div class="bpm-info">
+                            <div class="bpm-stage">80 BPM<br><small>Round 1</small></div>
+                            <div class="bpm-stage">100 BPM<br><small>Round 2</small></div>
+                            <div class="bpm-stage">120 BPM<br><small>Round 3</small></div>
+                        </div>
+                    </section>
+                    
+                    <!-- Current Selection -->
+                    <section class="settings-section">
+                        <h3>Current Selection</h3>
+                        <div class="current-selection">
+                            <div class="selection-info">
+                                <strong>Group:</strong> <span id="currentGroup">Intermediate</span>
+                            </div>
+                            <div class="selection-info">
+                                <strong>Pattern:</strong> <span id="currentPattern">1 1A 2 3 4</span>
+                            </div>
+                        </div>
+                    </section>
+                    
+                </div>
+                
+                <div class="settings-footer">
+                    <button id="applySettings" class="apply-btn">Apply & Start New Challenge</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- XP Meter (upper left, at top) - expanded for glow effect -->
+        <div id="xpMeterContainer" style="position: absolute; left: 5px; top: 5px; width: 90px; height: 90px; z-index: 101; overflow: visible;">
+            <svg width="90" height="90" viewBox="-10 -10 90 90" style="overflow: visible;">
+                <!-- Definitions for gradients and masks -->
+                <defs>
+                    <!-- Metallic border gradient -->
+                    <linearGradient id="xpBorderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8a8a8a"/>
+                        <stop offset="30%" stop-color="#c0c0c0"/>
+                        <stop offset="50%" stop-color="#a0a0a0"/>
+                        <stop offset="70%" stop-color="#c0c0c0"/>
+                        <stop offset="100%" stop-color="#707070"/>
+                    </linearGradient>
+                    
+                    <!-- Inner sphere gradient (dark gray when empty) -->
+                    <radialGradient id="xpEmptyGradient" cx="40%" cy="30%" r="60%">
+                        <stop offset="0%" stop-color="#6a6a6a"/>
+                        <stop offset="100%" stop-color="#3a3a3a"/>
+                    </radialGradient>
+                    
+                    <!-- Green fill gradient -->
+                    <linearGradient id="xpFillGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="#7cb342"/>
+                        <stop offset="50%" stop-color="#9ccc65"/>
+                        <stop offset="100%" stop-color="#aed581"/>
+                    </linearGradient>
+                    
+                    <!-- Clip path for the inner circle -->
+                    <clipPath id="xpClip">
+                        <circle cx="35" cy="35" r="27"/>
+                    </clipPath>
+                </defs>
+                
+                <!-- Outer metallic ring -->
+                <circle id="xpOuterRing" cx="35" cy="35" r="32" fill="url(#xpBorderGradient)" stroke="#505050" stroke-width="1"/>
+                
+                <!-- Inner dark background -->
+                <circle cx="35" cy="35" r="27" fill="url(#xpEmptyGradient)"/>
+                
+                <!-- Green fill (animated via clip) -->
+                <g clip-path="url(#xpClip)">
+                    <rect id="xpFill" x="8" y="62" width="54" height="0" fill="url(#xpFillGradient)">
+                    </rect>
+                </g>
+                
+                <!-- Glossy highlight on sphere -->
+                <ellipse cx="28" cy="25" rx="12" ry="8" fill="rgba(255,255,255,0.2)"/>
+                
+                <!-- XP Text -->
+                <text id="xpText" x="35" y="42" text-anchor="middle" fill="white" font-size="20" font-weight="bold" font-family="Arial, sans-serif" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">XP</text>
+            </svg>
+        </div>
+        
+        <!-- Tiki Dice Button (below XP meter) -->
+        <button id="tikiDiceBtn" class="tiki-dice-btn" title="Roll for new rhythm" style="position: absolute; left: 15px; top: 100px; width: 70px; height: 70px; z-index: 101; padding: 0; margin: 0; border: 4px solid #5D4037; border-radius: 15px; background: linear-gradient(135deg, #6D4C41 0%, #8D6E63 50%, #6D4C41 100%); cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(141, 110, 99, 0.4);">
+            <span class="dice-icon" style="font-size: 42px; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6)); line-height: 1; display: block; pointer-events: none;">🎲</span>
+        </button>
+        
+        <!-- Main Game Container - overlays on background -->
+        <div id="gameContainer">
+            
+            <!-- Top UI Bar (positioned to match Unity) -->
+            <div id="topBar">
+                <!-- Progress bar removed - now using circle pulse visual -->
+            </div>
+            
+            <!-- Difficulty Slider (top right) -->
+            <div id="difficultyContainer">
+                <span class="difficultyLabel expert">EXPERT</span>
+                <input type="range" id="difficultySlider" min="1" max="5" value="3" step="1">
+                <span class="difficultyLabel novice">NOVICE</span>
+            </div>
+
+            <!-- Quit Button (top left) -->
+            <button id="quitButton">
+                <div class="quitIcon">🎭</div>
+                <div class="quitText">quit<br>lesson</div>
+            </button>
+
+            <!-- Menu Button (top right corner) -->
+            <button id="menuButton">⚙️</button>
+
+            <!-- Rhythm Circle Container (positioned right side, matching Unity) -->
+            <div id="circleContainer">
+                <svg id="rhythmCircle" viewBox="0 0 400 400" xmlns:xlink="http://www.w3.org/1999/xlink" style="overflow: visible;">
+                    <!-- Define metallic gradients -->
+                    <defs>
+                        <!-- Copper gradient (dark brown) -->
+                        <linearGradient id="copperGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6D4C41;stop-opacity:1" />
+                            <stop offset="25%" style="stop-color:#8D6E63;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#795548;stop-opacity:1" />
+                            <stop offset="75%" style="stop-color:#6D4C41;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#5D4037;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Silver gradient (light gray) -->
+                        <linearGradient id="silverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#C0C0C0;stop-opacity:1" />
+                            <stop offset="20%" style="stop-color:#D3D3D3;stop-opacity:1" />
+                            <stop offset="40%" style="stop-color:#B0B0B0;stop-opacity:1" />
+                            <stop offset="60%" style="stop-color:#C8C8C8;stop-opacity:1" />
+                            <stop offset="80%" style="stop-color:#D3D3D3;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#BEBEBE;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- White glow gradient for comet trail (fades from bright to transparent) -->
+                        <linearGradient id="whiteGlowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+                            <stop offset="70%" style="stop-color:#ffffff;stop-opacity:0.95" />
+                            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+                        </linearGradient>
+                        
+                        <!-- Circular clip path for victory video -->
+                        <clipPath id="circleClip">
+                            <circle cx="200" cy="200" r="178"/>
+                        </clipPath>
+                        
+                        <!-- Radial gradient mask for soft fade reveal edge -->
+                        <mask id="revealMask">
+                            <radialGradient id="revealGradient" cx="50%" cy="50%" r="50%">
+                                <stop id="revealStop1" offset="0%" stop-color="white" stop-opacity="1"/>
+                                <stop id="revealStop2" offset="85%" stop-color="white" stop-opacity="1"/>
+                                <stop id="revealStop3" offset="100%" stop-color="white" stop-opacity="0"/>
+                            </radialGradient>
+                            <circle id="revealCircle" cx="200" cy="200" r="0" fill="url(#revealGradient)" style="transition: r 0.3s ease-out;"/>
+                        </mask>
+                    </defs>
+                    
+                    <!-- Outer ring with glow (HIDDEN except victory) -->
+                    <circle id="outerRing" cx="200" cy="200" r="180" fill="none" stroke="#FFD700" stroke-width="12" style="filter: drop-shadow(0 0 20px #FFD700); display: none;"/>
+                    
+                    <!-- LAYER 1: Medallion background (gray stone, always visible) -->
+                    <image id="medallionBackground" 
+                           xlink:href="medallion_background.png"
+                           href="medallion_background.png" 
+                           x="-16" y="-16" 
+                           width="432" height="432"
+                           opacity="1"
+                           style="transform-origin: 200px 200px;"/>
+                    
+                    <!-- LAYER 2: White glowing ring frame around the circle -->
+                    <circle id="frameRing" cx="200" cy="200" r="178" fill="none" stroke="white" stroke-width="4" style="filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.5)); opacity: 0.9;"/>
+                    
+                    <!-- LAYER 3: Medallion reveal (white artwork, masked by expanding circle with SOFT FADE edge) -->
+                    <image id="medallionReveal" 
+                           xlink:href="medallion_reveal.png"
+                           href="medallion_reveal.png" 
+                           x="-16" y="-16" 
+                           width="432" height="432"
+                           mask="url(#revealMask)"
+                           style="transform-origin: 200px 200px;"/>
+                    
+                    <!-- BABOON SLICE LAYER - Red off-beat indicators (behind player slices) -->
+                    <g id="sliceLayerBaboon"></g>
+                    
+                    <!-- SLICE LAYER GROUPS - between medallion and fog -->
+                    <g id="sliceLayerSilver"></g>
+                    <g id="sliceLayerBlue"></g>
+                    <g id="sliceLayerWhite"></g>
+                    <g id="sliceLayerGold"></g>
+                    
+                    <!-- CENTER FOG CIRCLE - Small rotating element on top of slices -->
+                    <image id="fogCircleImage" 
+                           xlink:href="fog-full.png"
+                           href="fog-full.png" 
+                           x="20" y="20" 
+                           width="360" height="360"
+                           opacity="1"
+                           class="center-gold"
+                           style="transform-origin: 200px 200px; transform: scale(0.125) rotate(0deg); transition: filter 0.55s ease;"/>
+                    
+                    <!-- Rotating scanner with trail image -->
+                    <g id="scannerGroup" transform="rotate(0 200 200)">
+                        <!-- Scanner trail image - precisely positioned -->
+                        <!-- Content right edge at x=200, content bottom at y=200 -->
+                        <image id="scannerTrailImage"
+                               xlink:href="Scanner_Trail.png"
+                               href="Scanner_Trail.png"
+                               x="122"
+                               y="-14"
+                               width="148"
+                               height="214"
+                               opacity="0.9"/>
+                        <!-- Scanner line (detection edge) - overlays the right edge of trail image -->
+                        <line x1="200" y1="200" x2="200" y2="22" stroke="#FFD700" stroke-width="3" stroke-linecap="round" style="filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));"/>
+                        <line x1="200" y1="200" x2="200" y2="22" stroke="#FFD700" stroke-width="10" opacity="0.2" stroke-linecap="round"/>
+                    </g>
+                    
+                    <!-- COMET TRAIL EFFECT - Uses rotation transform for proper positioning -->
+                    <g id="cometGroup" style="display: none; opacity: 1; transition: opacity 1.5s ease;">
+                        <!-- Comet trail arc - rotates as a group -->
+                        <g id="cometTrailGroup">
+                            <circle id="cometTrail" cx="200" cy="200" r="178" fill="none" 
+                                    stroke="white" stroke-width="6" 
+                                    stroke-linecap="round"
+                                    stroke-dasharray="0 1120"
+                                    style="filter: drop-shadow(0 0 10px white) drop-shadow(0 0 20px rgba(255, 255, 255, 0.7));"/>
+                        </g>
+                        <!-- Comet head - rotates separately to stay at leading edge -->
+                        <g id="cometHeadGroup">
+                            <circle id="cometHead" cx="200" cy="22" r="10" fill="white"
+                                    style="filter: drop-shadow(0 0 15px white) drop-shadow(0 0 30px rgba(255, 255, 255, 0.8));"/>
+                        </g>
+                    </g>
+                    
+                    <!-- Completed white glow ring (shown after comet completes) -->
+                    <circle id="victoryRing" cx="200" cy="200" r="178" fill="none" stroke="white" stroke-width="6" 
+                            style="filter: drop-shadow(0 0 12px white) drop-shadow(0 0 25px rgba(255, 255, 255, 0.7)); display: none;"/>
+                    
+                    <!-- White fill arc (glowing ring trace) -->
+                    <path id="whiteFillArc" d="" fill="none" stroke="white" style="display: none;"/>
+                    
+                    <!-- Crack overlay -->
+                    <circle id="crackOverlay" cx="200" cy="200" r="186" fill="rgba(0, 0, 0, 0.7)" stroke="rgba(255, 0, 0, 0.8)" stroke-width="4" style="display: none; pointer-events: none; filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));"/>
+                    
+                    <!-- VICTORY OVERLAY LAYERS (TOP - hidden normally) -->
+                    <!-- Victory gold fill circle -->
+                    <circle id="victoryGoldCircle" cx="200" cy="200" r="178" fill="#d4a846" style="display: none; opacity: 0; transition: opacity 0.5s ease;"/>
+                    
+                    <!-- Victory video - ON TOP of gold circle, clipped to circle -->
+                    <foreignObject x="22" y="22" width="356" height="356" id="victoryVideoContainer" style="display: none;">
+                        <video id="victoryVideo" xmlns="http://www.w3.org/1999/xhtml" 
+                               width="356" height="356" 
+                               loop muted playsinline
+                               style="object-fit: cover; border-radius: 50%;">
+                            <source src="victory-fog.mp4" type="video/mp4"/>
+                        </video>
+                    </foreignObject>
+                </svg>
+            </div>
+
+            <!-- Drum Pad (will be replaced with actual drum image from background) -->
+            <div id="drumPadOverlay">
+                <div id="drumPadHitArea"></div>
+            </div>
+
+            <!-- Feedback Text -->
+            <div id="feedbackText"></div>
+
+            <!-- Streak Counter -->
+            <div id="streakCounter">0/3</div>
+
+        </div>
+    </div>
+
+    <!-- Challenge Configuration (loaded from JSON) -->
+    <script src="challenges.js"></script>
+    <script src="rhythm-library.js"></script>
+    <script src="game.js"></script>
+    <script src="settings-controller.js"></script>
+</body>
+</html>

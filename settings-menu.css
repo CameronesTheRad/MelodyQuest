@@ -1,0 +1,398 @@
+/* ===== SETTINGS MENU ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.settings-panel {
+    background: linear-gradient(135deg, #2D3142 0%, #3a3f5c 100%);
+    border-radius: 20px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 3px solid #FFD700;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.settings-header h2 {
+    color: #FFD700;
+    font-size: 28px;
+    margin: 0;
+}
+
+.close-btn {
+    background: rgba(255, 69, 0, 0.8);
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.close-btn:hover {
+    transform: scale(1.1);
+    background: rgba(255, 69, 0, 1);
+}
+
+.settings-content {
+    padding: 20px 30px;
+}
+
+.settings-section {
+    margin-bottom: 30px;
+}
+
+.settings-section h3 {
+    color: #FFFFFF;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* Difficulty Groups */
+.difficulty-groups {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.group-btn {
+    background: rgba(68, 71, 90, 0.6);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: white;
+}
+
+.group-btn:hover {
+    transform: translateY(-5px);
+    border-color: #FFD700;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+.group-btn.active {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.group-icon {
+    font-size: 40px;
+}
+
+.group-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #FFD700;
+}
+
+.group-desc {
+    font-size: 12px;
+    color: #CCC;
+    text-align: center;
+}
+
+.group-count {
+    font-size: 11px;
+    color: #AAA;
+    margin-top: 5px;
+}
+
+/* BPM Info Display (static, not selectable) */
+.bpm-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.bpm-stage {
+    background: rgba(68, 71, 90, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 15px 10px;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.bpm-stage small {
+    display: block;
+    font-size: 10px;
+    color: #AAA;
+    margin-top: 3px;
+}
+
+/* Current Selection */
+.current-selection {
+    background: rgba(68, 71, 90, 0.4);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.selection-info {
+    color: white;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.selection-info:last-child {
+    margin-bottom: 0;
+}
+
+.selection-info strong {
+    color: #FFD700;
+}
+
+.selection-info span {
+    color: #FFFFFF;
+}
+
+/* Settings Footer */
+.settings-footer {
+    padding: 20px 30px;
+    border-top: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.apply-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    color: #2D3142;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+
+.apply-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+}
+
+.apply-btn:active {
+    transform: translateY(0);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .difficulty-groups {
+        grid-template-columns: 1fr;
+    }
+    
+    .bpm-info {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .settings-header h2 {
+        font-size: 22px;
+    }
+    
+    .new-rhythm-btn {
+        left: 10px;
+        padding: 12px 15px;
+    }
+    
+    .btn-icon {
+        font-size: 24px;
+    }
+    
+    .btn-text {
+        font-size: 11px;
+    }
+}
+
+/* ===== RHYTHM COUNTER ===== */
+#rhythmCounter {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(45, 49, 66, 0.95);
+    border: 3px solid #FFD700;
+    border-radius: 12px;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.counter-label {
+    font-size: 11px;
+    color: #FFD700;
+
+.counter-value {
+    font-size: 32px;
+    color: #FFFFFF;
+    font-weight: bold;
+    line-height: 1;
+    text-shadow: 0 0 10px #FFD700;
+}
+}
+
+.new-rhythm-btn::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: #654321;
+    border-radius: 50%;
+    border: 3px solid #8B4513;
+}
+
+.new-rhythm-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 30px;
+    background: #654321;
+    border-radius: 50%;
+    border: 3px solid #8B4513;
+}
+
+.new-rhythm-btn:hover {
+    transform: translateY(-50%) scale(1.08);
+    box-shadow: 
+        0 12px 30px rgba(210, 105, 30, 0.7),
+        inset 0 2px 6px rgba(210, 105, 30, 0.7);
+    border-color: #D2691E;
+}
+
+.new-rhythm-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.btn-icon {
+    font-size: 36px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.btn-text {
+    font-size: 13px;
+    font-weight: bold;
+    color: #FFE4B5;
+    text-align: center;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(255, 228, 181, 0.4);
+    font-family: 'Arial Black', sans-serif;
+}
+
+/* ===== TIKI DICE BUTTON (UPPER LEFT) ===== */
+.tiki-dice-btn {
+    /* Positioning */
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    width: 70px;
+    height: 70px;
+    z-index: 1001; /* Above everything */
+    
+    /* Reset all button defaults */
+    padding: 0;
+    margin: 0;
+    border: 4px solid #654321;
+    outline: none;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    /* Styling */
+    background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #8B4513 100%);
+    border-radius: 15px;
+    cursor: pointer;
+    
+    /* Layout */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Effects */
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.5),
+        inset 0 2px 4px rgba(210, 105, 30, 0.4),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+    
+    transition: all 0.3s ease;
+}
+
+.tiki-dice-btn:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 
+        0 8px 25px rgba(210, 105, 30, 0.6),
+        inset 0 2px 6px rgba(210, 105, 30, 0.6),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.3);
+    border-color: #D2691E;
+}
+
+.tiki-dice-btn:active {
+    transform: scale(0.95) rotate(-5deg);
+    animation: diceRoll 0.6s ease;
+}
+
+.tiki-dice-btn:focus {
+    outline: 2px solid #FFD700;
+    outline-offset: 2px;
+}
+
+@keyframes diceRoll {
+    0%, 100% { transform: scale(0.95) rotate(0deg); }
+    25% { transform: scale(0.95) rotate(90deg); }
+    50% { transform: scale(0.95) rotate(180deg); }
+    75% { transform: scale(0.95) rotate(270deg); }
+}
+
+.dice-icon {
+    font-size: 42px;
+    line-height: 1;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.6));
+    display: block;
+    pointer-events: none;
+}
